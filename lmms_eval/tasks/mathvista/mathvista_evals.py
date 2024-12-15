@@ -144,7 +144,7 @@ Model response: The correct answer is (B) 8/11.
 Extracted answer: B
 """
 
-
+from openai import AzureOpenAI
 class MathVistaEvaluator:
     API_TYPE = os.getenv("API_TYPE", "openai")
 
@@ -167,14 +167,24 @@ class MathVistaEvaluator:
         self.api_key = api_key
         self.gpt_model = gpt_model
         self.quick_extract = quick_extract
+        # self.openai =AzureOpenAI(
+        #     api_key = self.api_key,
+        #     api_version = "2024-02-15-preview",
+        #     azure_endpoint = self.API_URL
+        #     )
 
     def _post_request(self, payload):
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
+        # headers = {
+        #     "api-key": self.api_key,
+        #     "Content-Type": "application/json",
+        # }
+        headers = self.headers
         response = requests.post(self.API_URL, headers=headers, json=payload, timeout=30)
         response.raise_for_status()
+        # response = self.openai.chat.completions.create(
+        #     model=self.gpt_model,
+        #     **payload
+        # )
         return response.json()
 
     def get_chat_response(self, prompt, temperature=0, max_tokens=256, n=1, patience=5, sleep_time=0):
